@@ -57,8 +57,9 @@ static void update_battery_level() {
 static void update_battery_layer(Layer *layer, GContext* ctx){
   graphics_context_set_fill_color(ctx, GColorClear);
   
+  GPoint p = {.x = 0, .y = batteryIndicatorY};
   for(int i = 0; i < currentBatteryLevel; i++){
-    GPoint p = {.x = batteryIndicatorInitialX - (i*batteryIndicatorSpace), .y = batteryIndicatorY};
+    p.x = batteryIndicatorInitialX - (i*batteryIndicatorSpace);
     graphics_fill_circle(ctx, p, 3);    
   }  
     
