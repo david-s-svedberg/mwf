@@ -50,8 +50,12 @@ static void update_week(int currentWeekNumber) {
     text_layer_set_text(s_week_numer_layer, s_week_text_buffer);
 }
 
+static void handle_battery_state_changed(BatteryChargeState charge_state) {
+  currentBatteryLevel = round(charge_state.charge_percent/20);
+}
+
 static void update_battery_level() {
-  currentBatteryLevel = round(battery_state_service_peek().charge_percent/20);  
+  handle_battery_state_changed(battery_state_service_peek());
 }
 
 static void update_battery_layer(Layer *layer, GContext* ctx){
@@ -70,12 +74,6 @@ static void time_tick_handler(struct tm *tick_time, TimeUnits units_changed) {
   
   int currentHourNumber = tick_time->tm_hour;  
   if (lastHourNumber != currentHourNumber) {
-    
-    int previousBatteryLevel = currentBatteryLevel;
-    update_battery_level();
-    if(previousBatteryLevel != currentBatteryLevel) {
-      layer_mark_dirty(s_battery_layer);  
-    }    
     
     int currentDayNumber = tick_time->tm_yday;    
     if(lastDayNumber != currentDayNumber) {
@@ -192,11 +190,13 @@ static void init() {
   update_week_day(tick_time);
   update_date(tick_time);
   
-  tick_timer_service_subscribe(MINUTE_UNIT, time_tick_handler);  
+  tick_timer_service_subscribe(MINUTE_UNIT, time_tick_handler);
+  battery_state_service_subscribe(handle_battery_state_changed);
 }
 
 static void deinit() {
   tick_timer_service_unsubscribe();
+  battery_state_service_unsubscribe();
   window_destroy(s_main_window);
 }
 
