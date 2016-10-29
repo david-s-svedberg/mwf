@@ -1,0 +1,24 @@
+{
+    "author": "david.s.svedberg@gmail.com",
+    "dependencies": {},
+    "keywords": [],
+    "name": "mwf",
+    "pebble": {
+        "displayName": "MWF",
+        "enableMultiJS": true,
+        "messageKeys": [],
+        "projectType": "native",
+        "resources": {
+            "media": []
+        },
+        "sdkVersion": "3",
+        "targetPlatforms": [
+            "aplite"
+        ],
+        "uuid": "3c19d566-1000-4731-8536-667795f95762",
+        "watchapp": {
+            "watchface": true
+        }
+    },
+    "version": "1.0.0"
+}
