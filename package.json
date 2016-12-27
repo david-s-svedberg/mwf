@@ -1,12 +1,19 @@
 {
     "author": "david.s.svedberg@gmail.com",
-    "dependencies": {},
+    "dependencies": {
+        "pebble-clay": "^1.0.3"
+    },
     "keywords": [],
     "name": "mwf",
     "pebble": {
+        "capabilities": [
+            "configurable"
+        ],
         "displayName": "MWF",
         "enableMultiJS": true,
-        "messageKeys": [],
+        "messageKeys": [
+            "Language"
+        ],
         "projectType": "native",
         "resources": {
             "media": []

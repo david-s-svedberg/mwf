@@ -1,6 +1,8 @@
 #include <pebble.h>
 #include <math.h>
 
+#include "settings.h"
+
 static Window *s_main_window;
 
 static TextLayer *s_time_layer;
@@ -18,8 +20,6 @@ static int lastDayNumber = -1;
 static int lastHourNumber = -1;
 
 static int currentBatteryLevel = 5;
-
-const char *days[] = {"Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"}; 
 
 static int get_current_week_number(struct tm *tick_time) {
   char s_week_number_buffer[3];  
@@ -41,7 +41,7 @@ static void update_date(struct tm *tick_time) {
 }
 
 static void update_week_day(struct tm *tick_time) {
-  text_layer_set_text(s_week_day_layer, days[tick_time->tm_wday]);
+  text_layer_set_text(s_week_day_layer, get_day_name(tick_time->tm_wday));
 }
 
 static void update_week(int currentWeekNumber) {
@@ -170,6 +170,25 @@ static void main_window_unload(Window *window) {
   layer_destroy(s_battery_layer);
 }
 
+static void update_all(){
+  update_battery_level();
+  
+  time_t temp = time(NULL);
+  struct tm *tick_time = localtime(&temp);
+  
+  update_week(get_current_week_number(tick_time));
+  update_time(tick_time);
+  update_week_day(tick_time);
+  update_date(tick_time);
+}
+
+
+static void inbox_received_handler(DictionaryIterator *iter, void *context) {
+  handle_settings_changed(iter, context);
+  update_all();
+}
+
+
 static void init() {
   s_main_window = window_create();
   
@@ -180,23 +199,18 @@ static void init() {
   
   window_stack_push(s_main_window, true);
   
-  update_battery_level();
-  
-  time_t temp = time(NULL);
-  struct tm *tick_time = localtime(&temp);
-  
-  update_week(get_current_week_number(tick_time));
-  update_time(tick_time);
-  update_week_day(tick_time);
-  update_date(tick_time);
+  update_all();
   
   tick_timer_service_subscribe(MINUTE_UNIT, time_tick_handler);
   battery_state_service_subscribe(handle_battery_state_changed);
+  app_message_register_inbox_received(inbox_received_handler);
+  app_message_open(APP_MESSAGE_INBOX_SIZE_MINIMUM, APP_MESSAGE_OUTBOX_SIZE_MINIMUM);
 }
 
 static void deinit() {
   tick_timer_service_unsubscribe();
   battery_state_service_unsubscribe();
+  app_message_register_inbox_received(NULL);
   window_destroy(s_main_window);
 }
 
