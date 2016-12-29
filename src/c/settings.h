@@ -1,6 +1,4 @@
-#ifndef SETTINGS_H_INCLUDED
-#define SETTINGS_H_INCLUDED
-#define SETTINGS_KEY 1
+#pragma once
 
 typedef struct ClaySettings {
   int Language;
@@ -8,5 +6,4 @@ typedef struct ClaySettings {
 
 const char* get_day_name(int dayOfWeek);
 
-void handle_settings_changed(DictionaryIterator *iter, void *context);
-#endif
+void on_settings_changed(DictionaryIterator *iter, void *context);

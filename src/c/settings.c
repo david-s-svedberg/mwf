@@ -1,6 +1,7 @@
 #include <pebble.h>
 #include "settings.h"
 
+#define SETTINGS_KEY 1
 #define NONE_VALUE 0
 #define SWEDISH_VALUE 1
 #define ENGLISH_VALUE 2
@@ -11,8 +12,7 @@ const char *eng_days[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"
 static struct ClaySettings current_settings = { .Language = NONE_VALUE };
 
 static void load_settings() {
-  int ret = persist_read_data(SETTINGS_KEY, &current_settings, sizeof(current_settings));
-  if(E_DOES_NOT_EXIST == ret){
+  if(E_DOES_NOT_EXIST == persist_read_data(SETTINGS_KEY, &current_settings, sizeof(current_settings))){
     current_settings.Language = SWEDISH_VALUE;
   }
 }
@@ -45,7 +45,7 @@ const char* get_day_name(int dayOfWeek) {
   return ret;
 }
 
-void handle_settings_changed(DictionaryIterator *iter, void *context) {
+void on_settings_changed(DictionaryIterator *iter, void *context) {
   Tuple *language_code = dict_find(iter, MESSAGE_KEY_Language);
   struct ClaySettings *settings = get_current_settings();
   
