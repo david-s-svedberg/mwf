@@ -8,6 +8,7 @@ static TextLayer *time_layer;
 static TextLayer *week_numer_layer;
 static TextLayer *week_day_layer;
 static TextLayer *date_layer;
+static TextLayer *steps_layer;
 
 static Layer *battery_layer;
 
@@ -19,13 +20,15 @@ static int lastDayNumber = -1;
 static int lastHourNumber = -1;
 
 static int currentBatteryLevel = 10;
+static int currentSteps = 0;
 
-void init_update_layers(TextLayer *time_layer_p, TextLayer *week_numer_layer_p, TextLayer *week_day_layer_p, TextLayer *date_layer_p, Layer *battery_layer_p){
+void init_update_layers(TextLayer *time_layer_p, TextLayer *week_numer_layer_p, TextLayer *week_day_layer_p, TextLayer *date_layer_p, Layer *battery_layer_p, TextLayer *steps_layer_p){
   time_layer = time_layer_p;
   week_numer_layer = week_numer_layer_p;
   week_day_layer = week_day_layer_p;
   date_layer = date_layer_p;
   battery_layer = battery_layer_p;
+  steps_layer = steps_layer_p;
 }
 
 void init_battery_indicator(GRect batteryLayerBounds){
@@ -65,6 +68,13 @@ static void update_week(int currentWeekNumber) {
     text_layer_set_text(week_numer_layer, week_text_buffer);
 }
 
+static void update_current_steps() {
+    static char steps_text_buffer[16];
+  
+    snprintf(steps_text_buffer, sizeof(steps_text_buffer), "%d", currentSteps);    
+    text_layer_set_text(steps_layer, steps_text_buffer);
+}
+
 void update_battery_layer(Layer *layer, GContext* ctx){
   static int xOffset = 5;
   static int yOffset = 4;
@@ -81,6 +91,17 @@ void update_battery_layer(Layer *layer, GContext* ctx){
 
 void set_current_battery_level() {
   on_battery_state_changed(battery_state_service_peek());
+}
+
+void set_current_steps() {
+  currentSteps = (int)health_service_sum_today(HealthMetricStepCount);
+}
+
+void on_health_event(HealthEventType event, void *context) {
+  if(event == HealthEventMovementUpdate) {
+    set_current_steps();
+    update_current_steps();
+  }
 }
 
 void on_battery_state_changed(BatteryChargeState charge_state) {
@@ -115,8 +136,10 @@ void update_all(){
   time_t temp = time(NULL);
   struct tm *tick_time = localtime(&temp);
   set_current_battery_level();
+  set_current_steps();
   
   update_week(get_current_week_number(tick_time));
+  update_current_steps();
   update_time(tick_time);
   update_week_day(tick_time);
   update_date(tick_time);

@@ -16,11 +16,21 @@
         ],
         "projectType": "native",
         "resources": {
-            "media": []
+            "media": [
+                {
+                    "file": "images/steps.png",
+                    "name": "STEP_ICON",
+                    "spaceOptimization": "memory",
+                    "targetPlatforms": [
+                        "diorite"
+                    ],
+                    "type": "bitmap"
+                }
+            ]
         },
         "sdkVersion": "3",
         "targetPlatforms": [
-            "aplite"
+            "diorite"
         ],
         "uuid": "3c19d566-1000-4731-8536-667795f95762",
         "watchapp": {
