@@ -30,7 +30,8 @@
         },
         "sdkVersion": "3",
         "targetPlatforms": [
-            "diorite"
+            "diorite",
+            "aplite"
         ],
         "uuid": "3c19d566-1000-4731-8536-667795f95762",
         "watchapp": {

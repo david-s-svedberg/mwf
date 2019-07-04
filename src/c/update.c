@@ -68,12 +68,14 @@ static void update_week(int currentWeekNumber) {
     text_layer_set_text(week_numer_layer, week_text_buffer);
 }
 
+#if defined(PBL_HEALTH)
 static void update_current_steps() {
     static char steps_text_buffer[16];
 
     snprintf(steps_text_buffer, sizeof(steps_text_buffer), "%d", currentSteps);
     text_layer_set_text(steps_layer, steps_text_buffer);
 }
+#endif
 
 void update_battery_layer(Layer *layer, GContext* ctx){
   static int xOffset = 5;
@@ -97,12 +99,14 @@ void set_current_steps() {
   currentSteps = (int)health_service_sum_today(HealthMetricStepCount);
 }
 
+#if defined(PBL_HEALTH)
 void on_health_event(HealthEventType event, void *context) {
   if(event == HealthEventMovementUpdate) {
     set_current_steps();
     update_current_steps();
   }
 }
+#endif
 
 void on_battery_state_changed(BatteryChargeState charge_state) {
   currentBatteryLevel = round(charge_state.charge_percent/10);
@@ -136,10 +140,13 @@ void update_all(){
   time_t temp = time(NULL);
   struct tm *tick_time = localtime(&temp);
   set_current_battery_level();
+
+  #if defined(PBL_HEALTH)
   set_current_steps();
+  update_current_steps();
+  #endif
 
   update_week(get_current_week_number(tick_time));
-  update_current_steps();
   update_time(tick_time);
   update_week_day(tick_time);
   update_date(tick_time);
