@@ -6,7 +6,7 @@
 #define SWEDISH_VALUE 1
 #define ENGLISH_VALUE 2
 
-const char *swe_days[] = {"Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"}; 
+const char *swe_days[] = {"Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"};
 const char *eng_days[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
 static struct ClaySettings current_settings = { .Language = NONE_VALUE };
@@ -21,7 +21,7 @@ static struct ClaySettings *get_current_settings(){
   if(current_settings.Language == NONE_VALUE) {
     load_settings();
   }
-  
+
   return &current_settings;
 }
 
@@ -41,14 +41,14 @@ const char* get_day_name(int dayOfWeek) {
   else {
     ret = NULL;
   }
-  
+
   return ret;
 }
 
 void on_settings_changed(DictionaryIterator *iter, void *context) {
   Tuple *language_code = dict_find(iter, MESSAGE_KEY_Language);
   struct ClaySettings *settings = get_current_settings();
-  
+
   if (language_code != NULL) {
     settings->Language = language_code->value->int32;
   }

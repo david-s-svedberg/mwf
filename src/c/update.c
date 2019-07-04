@@ -38,21 +38,21 @@ void init_battery_indicator(GRect batteryLayerBounds){
 
 static int get_current_week_number(struct tm *tick_time) {
   char week_number_buffer[3];
-  strftime(week_number_buffer, sizeof(week_number_buffer), "%W", tick_time);
-  
+  strftime(week_number_buffer, sizeof(week_number_buffer), "%V", tick_time);
+
   return atoi(week_number_buffer);
 }
 
 static void update_time(struct tm *tick_time) {
   static char time_buffer[8];
-  
+
   strftime(time_buffer, sizeof(time_buffer), clock_is_24h_style() ? "%H:%M" : "%I:%M", tick_time);
   text_layer_set_text(time_layer, time_buffer);
 }
 
-static void update_date(struct tm *tick_time) {  
+static void update_date(struct tm *tick_time) {
   static char date_buffer[11];
-  
+
   strftime(date_buffer, sizeof(date_buffer), "%Y-%m-%d", tick_time);
   text_layer_set_text(date_layer, date_buffer);
 }
@@ -63,15 +63,15 @@ static void update_week_day(struct tm *tick_time) {
 
 static void update_week(int currentWeekNumber) {
     static char week_text_buffer[5];
-  
-    snprintf(week_text_buffer, sizeof(week_text_buffer), "v.%d", currentWeekNumber);    
+
+    snprintf(week_text_buffer, sizeof(week_text_buffer), "v.%d", currentWeekNumber);
     text_layer_set_text(week_numer_layer, week_text_buffer);
 }
 
 static void update_current_steps() {
     static char steps_text_buffer[16];
-  
-    snprintf(steps_text_buffer, sizeof(steps_text_buffer), "%d", currentSteps);    
+
+    snprintf(steps_text_buffer, sizeof(steps_text_buffer), "%d", currentSteps);
     text_layer_set_text(steps_layer, steps_text_buffer);
 }
 
@@ -79,14 +79,14 @@ void update_battery_layer(Layer *layer, GContext* ctx){
   static int xOffset = 5;
   static int yOffset = 4;
   static int radius = 2;
-  
+
   graphics_context_set_fill_color(ctx, GColorClear);
   GPoint p = {.x = 0, .y = 0};
   for(int i = 0; i < currentBatteryLevel; i++){
     p.x = batteryIndicatorInitialX - (i*xOffset);
     p.y = i % 2 == 0 ? batteryIndicatorY + yOffset : batteryIndicatorY;
     graphics_fill_circle(ctx, p, radius);
-  } 
+  }
 }
 
 void set_current_battery_level() {
@@ -110,26 +110,26 @@ void on_battery_state_changed(BatteryChargeState charge_state) {
 
 void on_time_tick(struct tm *tick_time, TimeUnits units_changed) {
   update_time(tick_time);
-  
-  int currentHourNumber = tick_time->tm_hour;  
+
+  int currentHourNumber = tick_time->tm_hour;
   if (lastHourNumber != currentHourNumber) {
     lastHourNumber = currentHourNumber;
-    
+
     int currentDayNumber = tick_time->tm_yday;
     if(lastDayNumber != currentDayNumber) {
       lastDayNumber = currentDayNumber;
-      
+
       update_date(tick_time);
       update_week_day(tick_time);
-      
+
       int currentWeekNumber = get_current_week_number(tick_time);
       if(lastWeekNumber != currentWeekNumber) {
         lastWeekNumber = currentWeekNumber;
-      
+
         update_week(currentWeekNumber);
-      }      
-    }    
-  }  
+      }
+    }
+  }
 }
 
 void update_all(){
@@ -137,7 +137,7 @@ void update_all(){
   struct tm *tick_time = localtime(&temp);
   set_current_battery_level();
   set_current_steps();
-  
+
   update_week(get_current_week_number(tick_time));
   update_current_steps();
   update_time(tick_time);
