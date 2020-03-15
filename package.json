@@ -22,7 +22,8 @@
                     "name": "STEP_ICON",
                     "spaceOptimization": "memory",
                     "targetPlatforms": [
-                        "diorite"
+                        "diorite",
+                        "basalt"
                     ],
                     "type": "bitmap"
                 }
@@ -31,7 +32,8 @@
         "sdkVersion": "3",
         "targetPlatforms": [
             "diorite",
-            "aplite"
+            "aplite",
+            "basalt"
         ],
         "uuid": "3c19d566-1000-4731-8536-667795f95762",
         "watchapp": {
